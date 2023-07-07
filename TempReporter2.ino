@@ -7,6 +7,7 @@
 float T_Meas_2;
 float T_Filt_2;
 
+
 char ssid[] = "FryganzaController";
 char password[] = "";
 
@@ -60,12 +61,11 @@ void setup(void) {
 
 
 void loop(void) {
+  for (int i = 0; i < 5; i++) {
     T_Meas_2 = (float)ktc.readFahrenheit();
     delay(200);
     T_Filt_2 = lag_filter(T_Filt_2, T_Meas_2, 0.1);
-   
-    Serial.println(String(T_Filt_2));
-
+  }
   if (WiFi.status() != WL_CONNECTED) {
     ConnectToWiFi();
   }  
@@ -74,8 +74,7 @@ void loop(void) {
     WiFiClient client;
     HTTPClient http;
 
-    String url_str = "http://192.168.4.1/update?T_Filt_2=" + String(T_Filt_2) + "&";
-
+    String url_str = "http://192.168.4.1/update?T_Filt_2=" + String(T_Filt_2) + "&"; 
     Serial.println(url_str);
     http.begin(client, url_str);  
     
@@ -91,7 +90,6 @@ void loop(void) {
   
     http.end();
   }
-  delay(1000);
 }
 
 
