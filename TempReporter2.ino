@@ -1,15 +1,14 @@
 #include "max6675.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <ESP8266WebServer.h>
 
 
 
 float T_Meas_2;
 float T_Filt_2;
 
-char* ssid = "ESP-A3CAC0";
-char* password = "";
+char ssid[] = "FryganzaController";
+char password[] = "";
 
 int ktcSO  = 12;
 int ktcCS  = 13;
@@ -57,8 +56,6 @@ float lag_filter(float filtered_value, float measured_value, float filter_consta
 
 void setup(void) {
   Serial.begin(115200);
-
-  ConnectToWiFi();
 }
 
 
@@ -73,22 +70,20 @@ void loop(void) {
     ConnectToWiFi();
   }  
   if (WiFi.status() == WL_CONNECTED) {
+    
+    WiFiClient client;
     HTTPClient http;
 
     String url_str = "http://192.168.4.1/update?T_Filt_2=" + String(T_Filt_2) + "&";
 
-Serial.println(url_str);
-    
-    
-    http.begin(url_str);  
+    Serial.println(url_str);
+    http.begin(client, url_str);  
     
     int httpResponseCode = http.GET();
   
     if (httpResponseCode > 0) {
       Serial.print("HTTP Response code: ");
       Serial.println(httpResponseCode);
-//      String response = http.getString();
-//      Serial.println(response);
     } else {
       Serial.print("Error code: ");
       Serial.println(httpResponseCode);
