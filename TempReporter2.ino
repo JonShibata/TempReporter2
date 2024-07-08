@@ -8,15 +8,16 @@
 float T_Meas_2;
 float T_Filt_2;
 
-char* ssid = "ESP-A3CAC0";
-char* password = "";
+const char* ssid = "Fryganza";
+const char* password = "";
 
-int ktcSO  = 12;
-int ktcCS  = 13;
-int ktcCLK = 14;
+int ktcSO  = 12; // D6
+int ktcCS  = 13; // D8
+int ktcCLK = 14; // D5
 
 MAX6675 ktc(ktcCLK, ktcCS, ktcSO);
 
+WiFiClient client;
 
 void ConnectToWiFi(void) {
 
@@ -80,7 +81,7 @@ void loop(void) {
 Serial.println(url_str);
     
     
-    http.begin(url_str);  
+    http.begin(client, url_str);  
     
     int httpResponseCode = http.GET();
   
