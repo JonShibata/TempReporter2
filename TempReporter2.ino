@@ -1,8 +1,8 @@
+
 #include "max6675.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WebServer.h>
-
 
 
 float T_Meas_2;
@@ -12,8 +12,9 @@ const char* ssid = "Fryganza";
 const char* password = "";
 
 int ktcSO  = 12; // D6
-int ktcCS  = 13; // D8
+int ktcCS  = 15; // D8
 int ktcCLK = 14; // D5
+
 
 MAX6675 ktc(ktcCLK, ktcCS, ktcSO);
 
@@ -51,13 +52,18 @@ void ConnectToWiFi(void) {
 
 
 float lag_filter(float filtered_value, float measured_value, float filter_constant) {
-
-    return (filtered_value + (measured_value - filtered_value) * filter_constant);
+    float output = 0.0;
+    if(isnan(measured_value)){
+        output = filtered_value;
+    } else{
+        output = filtered_value + (measured_value - filtered_value) * filter_constant;
+    }
+    return (output);
 }
 
 
 void setup(void) {
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   ConnectToWiFi();
 }
@@ -65,10 +71,10 @@ void setup(void) {
 
 void loop(void) {
     T_Meas_2 = (float)ktc.readFahrenheit();
-    delay(200);
-    T_Filt_2 = lag_filter(T_Filt_2, T_Meas_2, 0.1);
+    delay(1000);
+    T_Filt_2 = lag_filter(T_Filt_2, T_Meas_2, 0.1F);
    
-    Serial.println(String(T_Filt_2));
+    Serial.println("filt= " + String(T_Filt_2) + " meas=" + String(T_Meas_2)) ;
 
   if (WiFi.status() != WL_CONNECTED) {
     ConnectToWiFi();
@@ -78,8 +84,7 @@ void loop(void) {
 
     String url_str = "http://192.168.4.1/update?T_Filt_2=" + String(T_Filt_2) + "&";
 
-Serial.println(url_str);
-    
+    Serial.println(url_str);
     
     http.begin(client, url_str);  
     
@@ -88,8 +93,6 @@ Serial.println(url_str);
     if (httpResponseCode > 0) {
       Serial.print("HTTP Response code: ");
       Serial.println(httpResponseCode);
-//      String response = http.getString();
-//      Serial.println(response);
     } else {
       Serial.print("Error code: ");
       Serial.println(httpResponseCode);
@@ -97,7 +100,6 @@ Serial.println(url_str);
   
     http.end();
   }
-  delay(1000);
 }
 
 

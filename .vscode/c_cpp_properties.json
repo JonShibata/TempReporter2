@@ -19,9 +19,10 @@
             "includePath": [
                 "/home/jon/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk/include",
                 "/home/jon/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk/lwip2/include",
-                "/home/jon/TempReporter2_build/core",
+                "/mnt/hgfs/SZJGCM/Documents/shibata/TempReporter2_build/core",
                 "/home/jon/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266",
                 "/home/jon/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/variants/generic",
+                "/home/jon/Arduino/libraries/MAX6675_library",
                 "/home/jon/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WiFi/src",
                 "/home/jon/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266HTTPClient/src",
                 "/home/jon/.arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/ESP8266WebServer/src",
