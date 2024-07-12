@@ -1,8 +1,9 @@
 
 #include "max6675.h"
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <ESP8266WebServer.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+// #include <WiFiClient.h>
+// #include <WebServer.h>
 
 
 float T_Meas_2;
@@ -11,9 +12,9 @@ float T_Filt_2;
 const char* ssid = "Fryganza";
 const char* password = "";
 
-int ktcSO  = 12; // D6
-int ktcCS  = 15; // D8
-int ktcCLK = 14; // D5
+int ktcSO  = 19;
+int ktcCS  = 23;
+int ktcCLK = 5;
 
 
 MAX6675 ktc(ktcCLK, ktcCS, ktcSO);
@@ -72,7 +73,7 @@ void setup(void) {
 void loop(void) {
     T_Meas_2 = (float)ktc.readFahrenheit();
     delay(1000);
-    T_Filt_2 = lag_filter(T_Filt_2, T_Meas_2, 0.1F);
+    T_Filt_2 = lag_filter(T_Filt_2, T_Meas_2, 0.75f);
    
     Serial.println("filt= " + String(T_Filt_2) + " meas=" + String(T_Meas_2)) ;
 
@@ -80,13 +81,14 @@ void loop(void) {
     ConnectToWiFi();
   }  
   if (WiFi.status() == WL_CONNECTED) {
+
     HTTPClient http;
 
     String url_str = "http://192.168.4.1/update?T_Filt_2=" + String(T_Filt_2) + "&";
 
     Serial.println(url_str);
     
-    http.begin(client, url_str);  
+    http.begin(url_str);  
     
     int httpResponseCode = http.GET();
   
